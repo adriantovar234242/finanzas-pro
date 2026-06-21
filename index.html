@@ -235,29 +235,24 @@ const F=[
 ];
 const CHK='<svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 3.5L3.5 6L9 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
-// Estado en memoria — persiste mientras el tab esté abierto
-// Se intenta también guardar en window.storage para persistencia entre sesiones
+// Estado — localStorage para persistencia real
 var STATE = { Q: null, HIST: [] };
-var storageOk = false;
 
-// Intentar cargar desde window.storage al inicio
-async function initStorage() {
+function initStorage() {
   try {
-    var rq = await window.storage.get('fin-q');
-    var rh = await window.storage.get('fin-hist');
-    if (rq) STATE.Q = JSON.parse(rq.value);
-    if (rh) STATE.HIST = JSON.parse(rh.value);
-    storageOk = true;
-  } catch(e) { storageOk = false; }
+    var q = localStorage.getItem('fin-q');
+    var h = localStorage.getItem('fin-hist');
+    if (q) STATE.Q = JSON.parse(q);
+    if (h) STATE.HIST = JSON.parse(h);
+  } catch(e) {}
   renderQ();
 }
 
 function persist() {
-  if (!storageOk) return;
   try {
-    if (STATE.Q) window.storage.set('fin-q', JSON.stringify(STATE.Q));
-    else window.storage.delete('fin-q').catch(function(){});
-    window.storage.set('fin-hist', JSON.stringify(STATE.HIST));
+    if (STATE.Q) localStorage.setItem('fin-q', JSON.stringify(STATE.Q));
+    else localStorage.removeItem('fin-q');
+    localStorage.setItem('fin-hist', JSON.stringify(STATE.HIST));
   } catch(e) {}
 }
 
@@ -525,9 +520,8 @@ function eliminar(){
   persist(); cerrar(); renderH();
 }
 
-// INIT — todo en memoria primero, luego intentar cargar storage
+// INIT
 selQ(qSel);
-renderQ();
 initStorage();
 </script>
 </body>
