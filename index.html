@@ -16,26 +16,14 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:15px;min-height:100vh;padding-bottom:60px;}
 .wrap{max-width:480px;margin:0 auto;padding:20px 14px;}
-
-/* LOGIN */
-#login-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
-.login-logo{font-size:32px;font-weight:700;letter-spacing:-1px;margin-bottom:8px;}
-.login-logo span{color:var(--gold);}
-.login-sub{font-size:14px;color:var(--m);margin-bottom:40px;}
-.btn-google{display:flex;align-items:center;gap:12px;background:#fff;color:#333;border:none;border-radius:8px;padding:14px 24px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .15s;}
-.btn-google:hover{opacity:.9;}
-.btn-google img{width:22px;height:22px;}
-
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;}
 .logo{font-size:18px;font-weight:700;letter-spacing:-0.3px;}
 .logo span{color:var(--gold);}
 .nav{display:flex;gap:6px;}
 .nb{font-size:12px;padding:5px 12px;border-radius:99px;border:1px solid var(--b);background:transparent;color:var(--m);cursor:pointer;font-family:inherit;}
 .nb.on{background:var(--s2);border-color:var(--b2);color:var(--text);}
-.user-btn{font-size:11px;color:var(--hint);background:none;border:none;cursor:pointer;font-family:inherit;padding:4px;}
-.user-btn:hover{color:var(--red);}
 .sc{display:none;}.sc.on{display:block;}
-.sync{font-size:11px;color:var(--hint);text-align:center;padding:4px;margin-bottom:8px;}
+.sync{font-size:11px;color:var(--hint);text-align:center;padding:6px;margin-bottom:8px;}
 .sync.ok{color:var(--green);}
 .sync.err{color:var(--gold);}
 .inicio-card{background:var(--s1);border:1px solid var(--b);border-radius:var(--r);padding:28px 20px;text-align:center;margin-bottom:14px;}
@@ -48,7 +36,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .ing:focus{border-color:var(--gold);}
 .ing::placeholder{color:var(--hint);font-size:16px;font-weight:400;}
 .bok{padding:10px 20px;background:var(--gold);color:#000;border:none;border-radius:7px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;white-space:nowrap;}
-.qsel{display:flex;gap:6px;justify-content:center;}
+.qsel{display:flex;gap:6px;justify-content:center;margin-bottom:12px;}
 .hero{background:var(--s1);border:1px solid var(--b);border-radius:var(--r);padding:18px 16px;margin-bottom:12px;text-align:center;position:relative;overflow:hidden;}
 .hero::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),var(--gold));}
 .hero-per{font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;}
@@ -84,6 +72,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .nota-ta::placeholder{color:var(--hint);}
 .bguardar{width:100%;padding:13px;background:transparent;border:1px solid var(--green);color:var(--green);border-radius:var(--r);font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:8px;}
 .breset{width:100%;padding:9px;background:transparent;border:1px solid var(--b);color:var(--hint);border-radius:var(--r);font-family:inherit;font-size:13px;cursor:pointer;}
+.breset:hover{border-color:var(--red);color:var(--red);}
 .hempty{text-align:center;padding:48px 20px;font-size:14px;color:var(--hint);}
 .hcard{background:var(--s1);border:1px solid var(--b);border-radius:var(--r);padding:15px 16px;margin-bottom:10px;cursor:pointer;}
 .hcard-top{display:flex;justify-content:space-between;align-items:flex-start;}
@@ -110,31 +99,15 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 </style>
 </head>
 <body>
-
-<!-- PANTALLA LOGIN -->
-<div id="login-screen">
-  <div class="login-logo">vault<span>·</span></div>
-  <div class="login-sub">Tu tracker financiero personal</div>
-  <button class="btn-google" onclick="loginGoogle()">
-    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg">
-    Entrar con Google
-  </button>
-</div>
-
-<!-- APP -->
-<div id="app-screen" style="display:none">
 <div class="wrap">
 <div class="header">
   <div class="logo">vault<span>·</span></div>
-  <div style="display:flex;align-items:center;gap:8px">
-    <div class="nav">
-      <button class="nb on" id="nb-q" onclick="goQ()">Quincena</button>
-      <button class="nb" id="nb-h" onclick="goH()">Historial</button>
-    </div>
-    <button class="user-btn" id="user-btn" onclick="logout()" title="Cerrar sesión">salir</button>
+  <div class="nav">
+    <button class="nb on" id="nb-q" onclick="goQ()">Quincena</button>
+    <button class="nb" id="nb-h" onclick="goH()">Historial</button>
   </div>
 </div>
-<div class="sync" id="sync-status">Cargando...</div>
+<div class="sync" id="sync-status">Conectando...</div>
 
 <div class="sc on" id="sc-q">
   <div id="st-i">
@@ -180,11 +153,31 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
     </div>
     <div class="sec">
       <div class="sec-lbl">Débito · meta $661.500</div>
-      <div class="item" id="i-comida" onclick="tog('comida')"><div class="chk"><svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L4 6.5L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div style="flex:1"><div class="iname">Comida</div></div><div class="imonto" style="color:var(--cyan)">$285.000</div></div>
-      <div class="item" id="i-uber" onclick="tog('uber')"><div class="chk"><svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L4 6.5L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div style="flex:1"><div class="iname">Uber</div></div><div class="imonto" style="color:var(--cyan)">$100.000</div></div>
-      <div class="item" id="i-pastillas" onclick="tog('pastillas')"><div class="chk"><svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L4 6.5L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div style="flex:1"><div class="iname">Pastillas cara</div><div class="isub">Quincenal</div></div><div class="imonto" style="color:var(--cyan)">$75.000</div></div>
-      <div class="item" id="i-varios" onclick="tog('varios')"><div class="chk"><svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L4 6.5L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div style="flex:1"><div class="iname">Gastos varios</div></div><div class="imonto" style="color:var(--cyan)">$200.000</div></div>
-      <div class="item" id="i-gcloud" onclick="tog('gcloud')"><div class="chk"><svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L4 6.5L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div style="flex:1"><div class="iname">Google Cloud</div></div><div class="imonto" style="color:var(--cyan)">$1.500</div></div>
+      <div class="item" id="i-comida" onclick="tog('comida')">
+        <div class="chk"><svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L4 6.5L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div style="flex:1"><div class="iname">Comida</div></div>
+        <div class="imonto" style="color:var(--cyan)">$285.000</div>
+      </div>
+      <div class="item" id="i-uber" onclick="tog('uber')">
+        <div class="chk"><svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L4 6.5L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div style="flex:1"><div class="iname">Uber</div></div>
+        <div class="imonto" style="color:var(--cyan)">$100.000</div>
+      </div>
+      <div class="item" id="i-pastillas" onclick="tog('pastillas')">
+        <div class="chk"><svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L4 6.5L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div style="flex:1"><div class="iname">Pastillas cara</div><div class="isub">Quincenal</div></div>
+        <div class="imonto" style="color:var(--cyan)">$75.000</div>
+      </div>
+      <div class="item" id="i-varios" onclick="tog('varios')">
+        <div class="chk"><svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L4 6.5L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div style="flex:1"><div class="iname">Gastos varios</div></div>
+        <div class="imonto" style="color:var(--cyan)">$200.000</div>
+      </div>
+      <div class="item" id="i-gcloud" onclick="tog('gcloud')">
+        <div class="chk"><svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L4 6.5L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div style="flex:1"><div class="iname">Google Cloud</div></div>
+        <div class="imonto" style="color:var(--cyan)">$1.500</div>
+      </div>
     </div>
     <div class="sec">
       <div class="sec-lbl">Extras</div>
@@ -205,13 +198,17 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
   </div>
 </div>
 
-<div class="sc" id="sc-h"><div id="hlist"></div></div>
+<div class="sc" id="sc-h">
+  <div id="hlist"></div>
 </div>
 </div>
 
 <div class="ov" id="ov" onclick="if(event.target===this)cerrar()">
   <div class="mod">
-    <div class="mod-hdr"><div class="mod-title" id="m-ttl"></div><button class="mod-x" onclick="cerrar()">×</button></div>
+    <div class="mod-hdr">
+      <div class="mod-title" id="m-ttl"></div>
+      <button class="mod-x" onclick="cerrar()">×</button>
+    </div>
     <div class="mrow"><span class="mrow-l">Ingreso</span><span class="mrow-v" id="m-ing" style="color:var(--green)"></span></div>
     <div class="mrow"><span class="mrow-l">Libre</span><span class="mrow-v" id="m-lib"></span></div>
     <div class="msec">Gastos fijos</div>
@@ -233,8 +230,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAqq3nOwsZlJholESfzJeBRnX5_Q1v5inM",
@@ -247,110 +243,109 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
 
 const F=[
-  {k:'amex',m:130000,l:'AMEX',c:'var(--purple)'},
-  {k:'nu',m:175000,l:'Nu',c:'var(--pink)'},
-  {k:'comida',m:285000,l:'Comida',c:'var(--cyan)'},
-  {k:'uber',m:100000,l:'Uber',c:'var(--cyan)'},
-  {k:'pastillas',m:75000,l:'Pastillas',c:'var(--cyan)'},
-  {k:'varios',m:200000,l:'Varios',c:'var(--cyan)'},
-  {k:'gcloud',m:1500,l:'Google Cloud',c:'var(--cyan)'},
+  {k:'amex',     m:130000, l:'AMEX',        c:'var(--purple)'},
+  {k:'nu',       m:175000, l:'Nu',           c:'var(--pink)'},
+  {k:'comida',   m:285000, l:'Comida',       c:'var(--cyan)'},
+  {k:'uber',     m:100000, l:'Uber',         c:'var(--cyan)'},
+  {k:'pastillas',m:75000,  l:'Pastillas',    c:'var(--cyan)'},
+  {k:'varios',   m:200000, l:'Varios',       c:'var(--cyan)'},
+  {k:'gcloud',   m:1500,   l:'Google Cloud', c:'var(--cyan)'},
 ];
 const CHK='<svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 3.5L3.5 6L9 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
-var STATE={Q:null,HIST:[]};
-var qSel=new Date().getDate()<=15?1:2;
-var UID=null;
+var STATE = { Q: null, HIST: [] };
+var qSel = new Date().getDate() <= 15 ? 1 : 2;
 
-const g=id=>document.getElementById(id);
-const COP=n=>{var a='$'+Math.abs(Math.round(n)).toLocaleString('es-CO');return n<0?'- '+a:a;};
-const HOY=()=>new Date().toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'});
-const PER=()=>{var d=new Date(),m=d.toLocaleDateString('es-CO',{month:'long',year:'numeric'});return qSel===1?'Q1 · 1–15 '+m:'Q2 · 16–fin '+m;};
-function fmt(el){var r=el.value.replace(/\D/g,'');el.value=r?parseInt(r,10).toLocaleString('es-CO'):'';}
-function pnum(id){return parseInt((g(id).value||'').replace(/\D/g,''),10)||0;}
-function setSync(msg,cls){var el=g('sync-status');el.textContent=msg;el.className='sync '+(cls||'');}
-
-// AUTH
-window.loginGoogle=async function(){
-  try{ await signInWithPopup(auth,provider); }
-  catch(e){ alert('Error al iniciar sesión: '+e.message); }
+const g = function(id){ return document.getElementById(id); };
+const COP = function(n){ var a='$'+Math.abs(Math.round(n)).toLocaleString('es-CO'); return n<0?'- '+a:a; };
+const HOY = function(){ return new Date().toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'}); };
+const PER = function(){
+  var d=new Date(), m=d.toLocaleDateString('es-CO',{month:'long',year:'numeric'});
+  return qSel===1 ? 'Q1 · 1–15 '+m : 'Q2 · 16–fin '+m;
 };
-window.logout=async function(){
-  if(confirm('¿Cerrar sesión?')) await signOut(auth);
-};
+function fmt(el){ var r=el.value.replace(/\D/g,''); el.value=r?parseInt(r,10).toLocaleString('es-CO'):''; }
+function pnum(id){ return parseInt((g(id).value||'').replace(/\D/g,''),10)||0; }
 
-onAuthStateChanged(auth,function(user){
-  if(user){
-    UID=user.uid;
-    g('login-screen').style.display='none';
-    g('app-screen').style.display='block';
-    g('user-btn').textContent=user.displayName?user.displayName.split(' ')[0]+' · salir':'salir';
-    selQ(qSel);
-    fbLoad();
-  } else {
-    UID=null;
-    g('login-screen').style.display='flex';
-    g('app-screen').style.display='none';
-  }
-});
+function setSync(msg, cls) {
+  var el = g('sync-status');
+  el.textContent = msg;
+  el.className = 'sync ' + (cls||'');
+}
 
-// FIREBASE
-function userDoc(name){ return doc(db,'usuarios',UID,name,'data'); }
+// FIREBASE SAVE/LOAD
+async function fbSaveQ(q) {
+  try {
+    if (!q) {
+      await deleteDoc(doc(db, 'finanzas', 'quincena-activa'));
+    } else {
+      await setDoc(doc(db, 'finanzas', 'quincena-activa'), q);
+    }
+    setSync('✓ Guardado', 'ok');
+  } catch(e) { setSync('Sin conexión — guardado local', 'err'); }
+}
 
-async function fbLoad(){
-  setSync('Cargando...');
-  try{
-    var qSnap=await getDoc(userDoc('quincena'));
-    var hSnap=await getDoc(userDoc('historial'));
-    STATE.Q=qSnap.exists()?qSnap.data().q:null;
-    STATE.HIST=hSnap.exists()?(hSnap.data().items||[]):[];
-    setSync('✓ Sincronizado','ok');
-  }catch(e){
-    setSync('Sin conexión','err');
+async function fbSaveHist() {
+  try {
+    await setDoc(doc(db, 'finanzas', 'historial'), { items: STATE.HIST });
+    setSync('✓ Guardado', 'ok');
+  } catch(e) { setSync('Sin conexión — guardado local', 'err'); }
+}
+
+async function fbLoad() {
+  try {
+    var qSnap = await getDoc(doc(db, 'finanzas', 'quincena-activa'));
+    var hSnap = await getDoc(doc(db, 'finanzas', 'historial'));
+    STATE.Q = qSnap.exists() ? qSnap.data() : null;
+    STATE.HIST = hSnap.exists() ? (hSnap.data().items || []) : [];
+    setSync('✓ Sincronizado', 'ok');
+  } catch(e) {
+    setSync('Sin conexión — modo local', 'err');
   }
   renderQ();
 }
 
-async function persist(){
-  if(!UID)return;
-  try{
-    if(STATE.Q) await setDoc(userDoc('quincena'),{q:STATE.Q});
-    else await deleteDoc(userDoc('quincena')).catch(()=>{});
-    await setDoc(userDoc('historial'),{items:STATE.HIST});
-    setSync('✓ Guardado','ok');
-  }catch(e){setSync('Error al guardar','err');}
+function persist() {
+  // localStorage como respaldo local
+  try {
+    if (STATE.Q) localStorage.setItem('fin-q', JSON.stringify(STATE.Q));
+    else localStorage.removeItem('fin-q');
+    localStorage.setItem('fin-hist', JSON.stringify(STATE.HIST));
+  } catch(e) {}
+  // Firebase como nube
+  fbSaveQ(STATE.Q);
+  fbSaveHist();
 }
 
-// UI
 function selQ(n){
   qSel=n;
-  g('sel-q1').style.borderColor=n===1?'var(--gold)':'';
-  g('sel-q1').style.color=n===1?'var(--gold)':'';
-  g('sel-q2').style.borderColor=n===2?'var(--gold)':'';
-  g('sel-q2').style.color=n===2?'var(--gold)':'';
+  g('sel-q1').style.borderColor = n===1?'var(--gold)':'';
+  g('sel-q1').style.color = n===1?'var(--gold)':'';
+  g('sel-q2').style.borderColor = n===2?'var(--gold)':'';
+  g('sel-q2').style.color = n===2?'var(--gold)':'';
 }
-window.selQ=selQ;
+window.selQ = selQ;
 
-window.goQ=function(){g('sc-q').className='sc on';g('sc-h').className='sc';g('nb-q').className='nb on';g('nb-h').className='nb';renderQ();};
-window.goH=function(){g('sc-h').className='sc on';g('sc-q').className='sc';g('nb-h').className='nb on';g('nb-q').className='nb';renderH();};
+function goQ(){ g('sc-q').className='sc on'; g('sc-h').className='sc'; g('nb-q').className='nb on'; g('nb-h').className='nb'; renderQ(); }
+function goH(){ g('sc-h').className='sc on'; g('sc-q').className='sc'; g('nb-h').className='nb on'; g('nb-q').className='nb'; renderH(); }
+window.goQ = goQ; window.goH = goH;
 
 function renderQ(){
   var q=STATE.Q;
-  if(!q){g('st-i').style.display='';g('st-a').style.display='none';return;}
-  g('st-i').style.display='none';g('st-a').style.display='';
+  if(!q){ g('st-i').style.display=''; g('st-a').style.display='none'; return; }
+  g('st-i').style.display='none'; g('st-a').style.display='';
   g('h-per').textContent=q.periodo||PER();
   g('q-nota').value=q.nota||'';
-  F.forEach(f=>g('i-'+f.k).classList.toggle('done',!!q.checks[f.k]));
-  renderXQ(q);calcQ(q);
+  F.forEach(function(f){ g('i-'+f.k).classList.toggle('done',!!q.checks[f.k]); });
+  renderXQ(q);
+  calcQ(q);
 }
 
 function calcQ(q){
   var gg=0;
-  F.forEach(f=>{if(q.checks[f.k])gg+=f.m;});
-  (q.extras||[]).forEach((e,i)=>{if(q.checks['x'+i])gg+=e.m;});
+  F.forEach(function(f){ if(q.checks[f.k]) gg+=f.m; });
+  (q.extras||[]).forEach(function(e,i){ if(q.checks['x'+i]) gg+=e.m; });
   var lib=q.ingreso-gg;
   g('h-num').textContent=COP(lib);
   g('h-num').style.color=lib>=300000?'var(--green)':lib>=0?'var(--gold)':'var(--red)';
@@ -358,175 +353,247 @@ function calcQ(q){
 }
 
 function renderXQ(q){
-  var el=g('q-xl');el.innerHTML='';
-  (q.extras||[]).forEach((e,i)=>{
+  var el=g('q-xl'); el.innerHTML='';
+  (q.extras||[]).forEach(function(e,i){
     var d=document.createElement('div');
     d.className='item xtra'+(q.checks['x'+i]?' done':'');
     d.innerHTML='<div class="chk">'+(q.checks['x'+i]?CHK:'')+'</div><div class="iname" style="flex:1">'+e.n+'</div><div class="imonto">'+COP(e.m)+'</div><button class="idel" onclick="event.stopPropagation();delXQ('+i+')">×</button>';
-    d.onclick=(ii=>()=>togXQi(ii))(i);
+    d.onclick=(function(ii){ return function(){ togXQi(ii); }; })(i);
     el.appendChild(d);
   });
 }
 
-window.pre=v=>g('ing').value=v.toLocaleString('es-CO');
+function pre(v){ g('ing').value=v.toLocaleString('es-CO'); }
+window.pre = pre;
 
-window.empezar=function(){
-  var v=pnum('ing');if(!v){alert('Pon un monto válido');return;}
+function empezar(){
+  var v=pnum('ing');
+  if(!v){ alert('Pon un monto válido'); return; }
   STATE.Q={ingreso:v,checks:{},extras:[],nota:'',periodo:PER()};
-  persist();g('ing').value='';renderQ();
-};
+  persist();
+  g('ing').value='';
+  renderQ();
+}
+window.empezar = empezar;
 
-window.editIng=function(){
-  var q=STATE.Q;if(!q)return;
-  var s=prompt('Nuevo ingreso:',q.ingreso);if(!s)return;
-  var n=parseInt(s.replace(/\D/g,''),10);if(!n)return;
-  q.ingreso=n;persist();renderQ();
-};
+function editIng(){
+  var q=STATE.Q; if(!q)return;
+  var s=prompt('Nuevo ingreso:',q.ingreso); if(!s)return;
+  var n=parseInt(s.replace(/\D/g,''),10); if(!n)return;
+  q.ingreso=n; persist(); renderQ();
+}
+window.editIng = editIng;
 
-window.tog=function(k){
-  var q=STATE.Q;if(!q)return;
+function tog(k){
+  var q=STATE.Q; if(!q)return;
   q.checks[k]=!q.checks[k];
   persist();
   g('i-'+k).classList.toggle('done',q.checks[k]);
   calcQ(q);
-};
+}
+window.tog = tog;
 
-function togXQi(i){var q=STATE.Q;if(!q)return;q.checks['x'+i]=!q.checks['x'+i];persist();renderXQ(q);calcQ(q);}
+function togXQi(i){
+  var q=STATE.Q; if(!q)return;
+  q.checks['x'+i]=!q.checks['x'+i];
+  persist(); renderXQ(q); calcQ(q);
+}
 
-window.togXQ=function(){
-  var f=g('q-xf'),b=g('q-xb');
+function togXQ(){
+  var f=g('q-xf'), b=g('q-xb');
   var o=f.classList.toggle('on');
   b.textContent=o?'Cancelar':'+ Gasto extra';
-  if(o){g('q-xd').value='';g('q-xm').value='';g('q-xd').focus();}
-};
+  if(o){ g('q-xd').value=''; g('q-xm').value=''; g('q-xd').focus(); }
+}
+window.togXQ = togXQ;
 
-window.addXQ=function(){
-  var desc=g('q-xd').value.trim(),m=pnum('q-xm');
-  if(!desc||!m){alert('Pon descripción y monto');return;}
-  var q=STATE.Q;if(!q)return;
+function addXQ(){
+  var desc=g('q-xd').value.trim();
+  var m=pnum('q-xm');
+  if(!desc||!m){ alert('Pon descripción y monto'); return; }
+  var q=STATE.Q; if(!q)return;
   q.extras=q.extras||[];
-  q.extras.push({n:desc,m});
-  persist();window.togXQ();renderQ();
-};
+  q.extras.push({n:desc,m:m});
+  persist(); togXQ(); renderQ();
+}
+window.addXQ = addXQ;
 
-window.delXQ=function(i){
-  var q=STATE.Q;if(!q)return;
+function delXQ(i){
+  var q=STATE.Q; if(!q)return;
   q.extras.splice(i,1);
   var nc={};
-  Object.keys(q.checks).forEach(k=>{if(k.startsWith('x')&&!isNaN(k.slice(1)))return;nc[k]=q.checks[k];});
-  q.checks=nc;persist();renderQ();
-};
+  Object.keys(q.checks).forEach(function(k){
+    if(k.startsWith('x')&&!isNaN(k.slice(1))) return;
+    nc[k]=q.checks[k];
+  });
+  q.checks=nc; persist(); renderQ();
+}
+window.delXQ = delXQ;
 
-window.guardar=function(){
-  var q=STATE.Q;if(!q)return;
+function guardar(){
+  var q=STATE.Q; if(!q)return;
   var gg=0;
-  F.forEach(f=>{if(q.checks[f.k])gg+=f.m;});
-  (q.extras||[]).forEach((e,i)=>{if(q.checks['x'+i])gg+=e.m;});
-  var e={id:Date.now(),periodo:q.periodo||PER(),ingreso:q.ingreso,gastado:gg,libre:q.ingreso-gg,extras:JSON.parse(JSON.stringify(q.extras||[])),checks:{...q.checks},nota:q.nota||'',guardado:HOY()};
-  STATE.HIST.unshift(e);STATE.Q=null;
+  F.forEach(function(f){ if(q.checks[f.k]) gg+=f.m; });
+  (q.extras||[]).forEach(function(e,i){ if(q.checks['x'+i]) gg+=e.m; });
+  var e={id:Date.now(),periodo:q.periodo||PER(),ingreso:q.ingreso,gastado:gg,libre:q.ingreso-gg,extras:JSON.parse(JSON.stringify(q.extras||[])),checks:Object.assign({},q.checks),nota:q.nota||'',guardado:HOY()};
+  STATE.HIST.unshift(e);
+  STATE.Q=null;
   persist();
-  g('st-i').style.display='';g('st-a').style.display='none';
-  window.goH();
-};
+  g('st-i').style.display=''; g('st-a').style.display='none';
+  goH();
+}
+window.guardar = guardar;
 
-window.reiniciar=function(){
+function reiniciar(){
   if(!confirm('¿Reiniciar?'))return;
-  var q=STATE.Q;if(!q)return;
-  q.checks={};q.extras=[];q.nota='';persist();renderQ();
-};
+  var q=STATE.Q; if(!q)return;
+  q.checks={}; q.extras=[]; q.nota='';
+  persist(); renderQ();
+}
+window.reiniciar = reiniciar;
 
 var notaT;
-g('q-nota').addEventListener('input',e=>{
-  clearTimeout(notaT);notaT=setTimeout(()=>{var q=STATE.Q;if(!q)return;q.nota=e.target.value;persist();},800);
+g('q-nota').addEventListener('input',function(e){
+  clearTimeout(notaT); notaT=setTimeout(function(){
+    var q=STATE.Q; if(!q)return;
+    q.nota=e.target.value; persist();
+  },800);
 });
-g('ing').addEventListener('input',function(){fmt(this);});
-g('ing').addEventListener('keydown',e=>{if(e.key==='Enter')window.empezar();});
-g('q-xm').addEventListener('input',function(){fmt(this);});
-g('q-xm').addEventListener('keydown',e=>{if(e.key==='Enter')window.addXQ();});
+g('ing').addEventListener('input',function(){ fmt(this); });
+g('ing').addEventListener('keydown',function(e){ if(e.key==='Enter') empezar(); });
+g('q-xm').addEventListener('input',function(){ fmt(this); });
+g('q-xm').addEventListener('keydown',function(e){ if(e.key==='Enter') addXQ(); });
 
 function renderH(){
-  var h=STATE.HIST,el=g('hlist');
-  if(!h.length){el.innerHTML='<div class="hempty">Sin quincenas guardadas aún.</div>';return;}
-  el.innerHTML=h.map(q=>'<div class="hcard" onclick="abrir('+q.id+')"><div class="hcard-top"><div><div class="hcard-per">'+q.periodo+'</div><div class="hcard-det">Ingreso '+COP(q.ingreso)+' · Marcado '+COP(q.gastado)+' · '+q.guardado+'</div></div><div class="hcard-libre" style="color:'+(q.libre>=200000?'var(--green)':q.libre>=0?'var(--gold)':'var(--red)')+'">'+COP(q.libre)+'</div></div>'+(q.nota?'<div class="hcard-nota">"'+q.nota+'"</div>':'')+' </div>').join('');
+  var h=STATE.HIST, el=g('hlist');
+  if(!h.length){ el.innerHTML='<div class="hempty">Sin quincenas guardadas aún.</div>'; return; }
+  el.innerHTML=h.map(function(q){
+    return '<div class="hcard" onclick="abrir('+q.id+')">'+
+      '<div class="hcard-top">'+
+      '<div><div class="hcard-per">'+q.periodo+'</div>'+
+      '<div class="hcard-det">Ingreso '+COP(q.ingreso)+' · Marcado '+COP(q.gastado)+' · '+q.guardado+'</div></div>'+
+      '<div class="hcard-libre" style="color:'+(q.libre>=200000?'var(--green)':q.libre>=0?'var(--gold)':'var(--red)')+'">'+COP(q.libre)+'</div>'+
+      '</div>'+(q.nota?'<div class="hcard-nota">"'+q.nota+'"</div>':'')+
+      '</div>';
+  }).join('');
 }
 
 var MID=null;
-function getE(){var i=STATE.HIST.findIndex(x=>x.id===MID);return{i,e:STATE.HIST[i]||null};}
+function getE(){ var i=STATE.HIST.findIndex(function(x){ return x.id===MID; }); return {arr:STATE.HIST,i:i,e:STATE.HIST[i]||null}; }
 
-window.abrir=function(id){
-  MID=id;var r=getE(),e=r.e;if(!e)return;
+function abrir(id){
+  MID=id;
+  var r=getE(), e=r.e; if(!e)return;
   g('m-ttl').textContent=e.periodo;
   g('m-ing').textContent=COP(e.ingreso);
   g('m-nota').value=e.nota||'';
   g('m-xf').classList.remove('on');
   g('m-xb').textContent='+ Gasto extra';
-  renderMF(e);renderMX(e);updLib(e);
+  renderMF(e); renderMX(e); updLib(e);
   g('ov').classList.add('on');
-};
+}
+window.abrir = abrir;
 
 function updLib(e){
   var gg=0;
-  F.forEach(f=>{if(e.checks[f.k])gg+=f.m;});
-  (e.extras||[]).forEach((x,i)=>{if(e.checks['x'+i])gg+=x.m;});
-  e.gastado=gg;e.libre=e.ingreso-gg;
+  F.forEach(function(f){ if(e.checks[f.k]) gg+=f.m; });
+  (e.extras||[]).forEach(function(x,i){ if(e.checks['x'+i]) gg+=x.m; });
+  e.gastado=gg; e.libre=e.ingreso-gg;
   g('m-lib').textContent=COP(e.libre);
   g('m-lib').style.color=e.libre>=0?'var(--green)':'var(--red)';
 }
 
 function renderMF(e){
-  var el=g('m-fijos');el.innerHTML='';
-  F.forEach(f=>{
+  var el=g('m-fijos'); el.innerHTML='';
+  F.forEach(function(f){
     var ok=!!e.checks[f.k];
-    var d=document.createElement('div');d.className='mitem';
-    d.innerHTML='<div class="mchk" style="background:'+(ok?'var(--green)':'transparent')+';border-color:'+(ok?'var(--green)':'var(--b2)')+';">'+(ok?CHK:'')+'</div><span class="mitem-n" style="'+(ok?'text-decoration:line-through;color:var(--m)':'')+'">'+f.l+'</span><span class="mitem-v" style="color:'+(ok?'var(--green)':'var(--hint)')+'">'+( ok?COP(f.m):'—')+'</span>';
-    d.onclick=(fk=>()=>{var r=getE();if(!r.e)return;r.e.checks[fk]=!r.e.checks[fk];updLib(r.e);persist();renderMF(r.e);})(f.k);
+    var d=document.createElement('div');
+    d.className='mitem';
+    d.innerHTML='<div class="mchk" style="background:'+(ok?'var(--green)':'transparent')+';border-color:'+(ok?'var(--green)':'var(--b2)')+';">'+(ok?CHK:'')+'</div>'+
+      '<span class="mitem-n" style="'+(ok?'text-decoration:line-through;color:var(--m)':'')+'">'+f.l+'</span>'+
+      '<span class="mitem-v" style="color:'+(ok?'var(--green)':'var(--hint)')+'">'+( ok?COP(f.m):'—')+'</span>';
+    d.onclick=(function(fk){ return function(){
+      var r=getE(); if(!r.e)return;
+      r.e.checks[fk]=!r.e.checks[fk];
+      updLib(r.e); persist(); renderMF(r.e);
+    };})(f.k);
     el.appendChild(d);
   });
 }
 
 function renderMX(e){
-  var el=g('m-xl');el.innerHTML='';
-  (e.extras||[]).forEach((x,i)=>{
+  var el=g('m-xl'); el.innerHTML='';
+  (e.extras||[]).forEach(function(x,i){
     var ok=!!e.checks['x'+i];
-    var d=document.createElement('div');d.className='mitem';
-    d.innerHTML='<div class="mchk" style="background:'+(ok?'var(--gold)':'transparent')+';border-color:'+(ok?'var(--gold)':'var(--b2)')+';">'+(ok?CHK:'')+'</div><span class="mitem-n" style="'+(ok?'text-decoration:line-through;color:var(--m)':'')+'">'+x.n+'</span><span class="mitem-v" style="color:'+(ok?'var(--gold)':'var(--hint)')+'">'+( ok?COP(x.m):'—')+'</span>';
-    d.onclick=(ii=>()=>{var r=getE();if(!r.e)return;r.e.checks['x'+ii]=!r.e.checks['x'+ii];updLib(r.e);persist();renderMX(r.e);})(i);
+    var d=document.createElement('div');
+    d.className='mitem';
+    d.innerHTML='<div class="mchk" style="background:'+(ok?'var(--gold)':'transparent')+';border-color:'+(ok?'var(--gold)':'var(--b2)')+';">'+(ok?CHK:'')+'</div>'+
+      '<span class="mitem-n" style="'+(ok?'text-decoration:line-through;color:var(--m)':'')+'">'+x.n+'</span>'+
+      '<span class="mitem-v" style="color:'+(ok?'var(--gold)':'var(--hint)')+'">'+( ok?COP(x.m):'—')+'</span>';
+    d.onclick=(function(ii){ return function(){
+      var r=getE(); if(!r.e)return;
+      r.e.checks['x'+ii]=!r.e.checks['x'+ii];
+      updLib(r.e); persist(); renderMX(r.e);
+    };})(i);
     el.appendChild(d);
   });
 }
 
-window.togXH=function(){
-  var f=g('m-xf'),b=g('m-xb');
+function togXH(){
+  var f=g('m-xf'), b=g('m-xb');
   var o=f.classList.toggle('on');
   b.textContent=o?'Cancelar':'+ Gasto extra';
-  if(o){g('m-xd').value='';g('m-xm').value='';g('m-xd').focus();}
-};
+  if(o){ g('m-xd').value=''; g('m-xm').value=''; g('m-xd').focus(); }
+}
+window.togXH = togXH;
 
-window.addXH=function(){
-  var desc=g('m-xd').value.trim(),m=pnum('m-xm');
-  if(!desc||!m){alert('Pon descripción y monto');return;}
-  var r=getE();if(!r.e)return;
+function addXH(){
+  var desc=g('m-xd').value.trim();
+  var m=pnum('m-xm');
+  if(!desc||!m){ alert('Pon descripción y monto'); return; }
+  var r=getE(); if(!r.e)return;
   r.e.extras=r.e.extras||[];
   var xi=r.e.extras.length;
-  r.e.extras.push({n:desc,m});
+  r.e.extras.push({n:desc,m:m});
   r.e.checks['x'+xi]=true;
-  updLib(r.e);persist();renderMX(r.e);window.togXH();
-};
+  updLib(r.e); persist(); renderMX(r.e); togXH();
+}
+window.addXH = addXH;
 
-g('m-xm').addEventListener('input',function(){fmt(this);});
-g('m-xm').addEventListener('keydown',e=>{if(e.key==='Enter')window.addXH();});
+g('m-xm').addEventListener('input',function(){ fmt(this); });
+g('m-xm').addEventListener('keydown',function(e){ if(e.key==='Enter') addXH(); });
 
 var mnotaT;
-g('m-nota').addEventListener('input',e=>{
-  clearTimeout(mnotaT);mnotaT=setTimeout(()=>{var r=getE();if(!r.e)return;r.e.nota=e.target.value;persist();renderH();},800);
+g('m-nota').addEventListener('input',function(e){
+  clearTimeout(mnotaT); mnotaT=setTimeout(function(){
+    var r=getE(); if(!r.e)return;
+    r.e.nota=e.target.value; persist(); renderH();
+  },800);
 });
 
-window.cerrar=function(){g('ov').classList.remove('on');MID=null;};
-window.eliminar=function(){
+function cerrar(){ g('ov').classList.remove('on'); MID=null; }
+window.cerrar = cerrar;
+
+function eliminar(){
   if(!confirm('¿Eliminar esta quincena?'))return;
-  STATE.HIST=STATE.HIST.filter(x=>x.id!==MID);
-  persist();window.cerrar();renderH();
-};
+  STATE.HIST=STATE.HIST.filter(function(x){ return x.id!==MID; });
+  persist(); cerrar(); renderH();
+}
+window.eliminar = eliminar;
+
+// INIT
+selQ(qSel);
+// Cargar local primero (instantáneo), luego Firebase
+try {
+  var lq = localStorage.getItem('fin-q');
+  var lh = localStorage.getItem('fin-hist');
+  if (lq) STATE.Q = JSON.parse(lq);
+  if (lh) STATE.HIST = JSON.parse(lh);
+} catch(e) {}
+renderQ();
+setSync('Sincronizando con la nube...');
+fbLoad();
+
 </script>
 </body>
 </html>
