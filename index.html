@@ -23,16 +23,20 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .nb{font-size:12px;padding:5px 12px;border-radius:99px;border:1px solid var(--b);background:transparent;color:var(--m);cursor:pointer;font-family:inherit;}
 .nb.on{background:var(--s2);border-color:var(--b2);color:var(--text);}
 .sc{display:none;}.sc.on{display:block;}
+.sync{font-size:11px;color:var(--hint);text-align:center;padding:6px;margin-bottom:8px;}
+.sync.ok{color:var(--green);}
+.sync.err{color:var(--gold);}
 .inicio-card{background:var(--s1);border:1px solid var(--b);border-radius:var(--r);padding:28px 20px;text-align:center;margin-bottom:14px;}
 .inicio-label{font-size:12px;color:var(--m);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px;}
 .presets{display:flex;gap:6px;justify-content:center;margin-bottom:12px;}
 .preset{font-size:12px;padding:5px 12px;border-radius:99px;border:1px solid var(--b);background:transparent;color:var(--m);cursor:pointer;font-family:inherit;}
 .preset:hover{border-color:var(--gold);color:var(--gold);}
-.inicio-row{display:flex;gap:8px;}
+.inicio-row{display:flex;gap:8px;margin-bottom:10px;}
 .ing{flex:1;background:var(--s2);border:1px solid var(--b);border-radius:7px;color:var(--text);font-family:inherit;font-size:22px;font-weight:700;padding:10px 14px;outline:none;text-align:center;min-width:0;}
 .ing:focus{border-color:var(--gold);}
 .ing::placeholder{color:var(--hint);font-size:16px;font-weight:400;}
 .bok{padding:10px 20px;background:var(--gold);color:#000;border:none;border-radius:7px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;white-space:nowrap;}
+.qsel{display:flex;gap:6px;justify-content:center;margin-bottom:12px;}
 .hero{background:var(--s1);border:1px solid var(--b);border-radius:var(--r);padding:18px 16px;margin-bottom:12px;text-align:center;position:relative;overflow:hidden;}
 .hero::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),var(--gold));}
 .hero-per{font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;}
@@ -103,6 +107,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
     <button class="nb" id="nb-h" onclick="goH()">Historial</button>
   </div>
 </div>
+<div class="sync" id="sync-status">Conectando...</div>
 
 <div class="sc on" id="sc-q">
   <div id="st-i">
@@ -113,13 +118,13 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
         <button class="preset" onclick="pre(1400000)">$1.4M</button>
         <button class="preset" onclick="pre(1700000)">$1.7M prima</button>
       </div>
-      <div style="display:flex;gap:6px;justify-content:center;margin-bottom:12px">
-        <button class="preset on" id="sel-q1" onclick="selQ(1)" style="border-color:var(--gold);color:var(--gold)">1–15 (Q1)</button>
-        <button class="preset" id="sel-q2" onclick="selQ(2)">16–fin (Q2)</button>
-      </div>
       <div class="inicio-row">
         <input class="ing" id="ing" type="text" inputmode="numeric" placeholder="1.400.000" autocomplete="off">
         <button class="bok" onclick="empezar()">Empezar</button>
+      </div>
+      <div class="qsel">
+        <button class="preset" id="sel-q1" onclick="selQ(1)">1–15 (Q1)</button>
+        <button class="preset" id="sel-q2" onclick="selQ(2)">16–fin (Q2)</button>
       </div>
     </div>
   </div>
@@ -223,7 +228,22 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
   </div>
 </div>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAqq3nOwsZlJholESfzJeBRnX5_Q1v5inM",
+  authDomain: "finanzas-pro-7de8d.firebaseapp.com",
+  projectId: "finanzas-pro-7de8d",
+  storageBucket: "finanzas-pro-7de8d.firebasestorage.app",
+  messagingSenderId: "926030922558",
+  appId: "1:926030922558:web:d35740a70f31499e20a26f"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 const F=[
   {k:'amex',     m:130000, l:'AMEX',        c:'var(--purple)'},
   {k:'nu',       m:175000, l:'Nu',           c:'var(--pink)'},
@@ -235,40 +255,12 @@ const F=[
 ];
 const CHK='<svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 3.5L3.5 6L9 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
-// Estado — localStorage para persistencia real
 var STATE = { Q: null, HIST: [] };
-
-function initStorage() {
-  try {
-    var q = localStorage.getItem('fin-q');
-    var h = localStorage.getItem('fin-hist');
-    if (q) STATE.Q = JSON.parse(q);
-    if (h) STATE.HIST = JSON.parse(h);
-  } catch(e) {}
-  renderQ();
-}
-
-function persist() {
-  try {
-    if (STATE.Q) localStorage.setItem('fin-q', JSON.stringify(STATE.Q));
-    else localStorage.removeItem('fin-q');
-    localStorage.setItem('fin-hist', JSON.stringify(STATE.HIST));
-  } catch(e) {}
-}
+var qSel = new Date().getDate() <= 15 ? 1 : 2;
 
 const g = function(id){ return document.getElementById(id); };
 const COP = function(n){ var a='$'+Math.abs(Math.round(n)).toLocaleString('es-CO'); return n<0?'- '+a:a; };
 const HOY = function(){ return new Date().toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'}); };
-var qSel = new Date().getDate() <= 15 ? 1 : 2; // auto-detecta, user puede cambiar
-
-function selQ(n){
-  qSel=n;
-  g('sel-q1').style.borderColor = n===1?'var(--gold)':'';
-  g('sel-q1').style.color       = n===1?'var(--gold)':'';
-  g('sel-q2').style.borderColor = n===2?'var(--gold)':'';
-  g('sel-q2').style.color       = n===2?'var(--gold)':'';
-}
-
 const PER = function(){
   var d=new Date(), m=d.toLocaleDateString('es-CO',{month:'long',year:'numeric'});
   return qSel===1 ? 'Q1 · 1–15 '+m : 'Q2 · 16–fin '+m;
@@ -276,8 +268,68 @@ const PER = function(){
 function fmt(el){ var r=el.value.replace(/\D/g,''); el.value=r?parseInt(r,10).toLocaleString('es-CO'):''; }
 function pnum(id){ return parseInt((g(id).value||'').replace(/\D/g,''),10)||0; }
 
+function setSync(msg, cls) {
+  var el = g('sync-status');
+  el.textContent = msg;
+  el.className = 'sync ' + (cls||'');
+}
+
+// FIREBASE SAVE/LOAD
+async function fbSaveQ(q) {
+  try {
+    if (!q) {
+      await deleteDoc(doc(db, 'finanzas', 'quincena-activa'));
+    } else {
+      await setDoc(doc(db, 'finanzas', 'quincena-activa'), q);
+    }
+    setSync('✓ Guardado', 'ok');
+  } catch(e) { setSync('Sin conexión — guardado local', 'err'); }
+}
+
+async function fbSaveHist() {
+  try {
+    await setDoc(doc(db, 'finanzas', 'historial'), { items: STATE.HIST });
+    setSync('✓ Guardado', 'ok');
+  } catch(e) { setSync('Sin conexión — guardado local', 'err'); }
+}
+
+async function fbLoad() {
+  try {
+    var qSnap = await getDoc(doc(db, 'finanzas', 'quincena-activa'));
+    var hSnap = await getDoc(doc(db, 'finanzas', 'historial'));
+    STATE.Q = qSnap.exists() ? qSnap.data() : null;
+    STATE.HIST = hSnap.exists() ? (hSnap.data().items || []) : [];
+    setSync('✓ Sincronizado', 'ok');
+  } catch(e) {
+    setSync('Sin conexión — modo local', 'err');
+  }
+  renderQ();
+}
+
+function persist() {
+  // localStorage como respaldo local
+  try {
+    if (STATE.Q) localStorage.setItem('fin-q', JSON.stringify(STATE.Q));
+    else localStorage.removeItem('fin-q');
+    localStorage.setItem('fin-hist', JSON.stringify(STATE.HIST));
+  } catch(e) {}
+  // Firebase como nube
+  fbSaveQ(STATE.Q);
+  fbSaveHist();
+}
+
+function selQ(n){
+  qSel=n;
+  g('sel-q1').style.borderColor = n===1?'var(--gold)':'';
+  g('sel-q1').style.color = n===1?'var(--gold)':'';
+  g('sel-q2').style.borderColor = n===2?'var(--gold)':'';
+  g('sel-q2').style.color = n===2?'var(--gold)':'';
+}
+window.selQ = selQ;
+
 function goQ(){ g('sc-q').className='sc on'; g('sc-h').className='sc'; g('nb-q').className='nb on'; g('nb-h').className='nb'; renderQ(); }
 function goH(){ g('sc-h').className='sc on'; g('sc-q').className='sc'; g('nb-h').className='nb on'; g('nb-q').className='nb'; renderH(); }
+window.goQ = goQ; window.goH = goH;
 
 function renderQ(){
   var q=STATE.Q;
@@ -312,6 +364,7 @@ function renderXQ(q){
 }
 
 function pre(v){ g('ing').value=v.toLocaleString('es-CO'); }
+window.pre = pre;
 
 function empezar(){
   var v=pnum('ing');
@@ -321,6 +374,7 @@ function empezar(){
   g('ing').value='';
   renderQ();
 }
+window.empezar = empezar;
 
 function editIng(){
   var q=STATE.Q; if(!q)return;
@@ -328,6 +382,7 @@ function editIng(){
   var n=parseInt(s.replace(/\D/g,''),10); if(!n)return;
   q.ingreso=n; persist(); renderQ();
 }
+window.editIng = editIng;
 
 function tog(k){
   var q=STATE.Q; if(!q)return;
@@ -336,6 +391,7 @@ function tog(k){
   g('i-'+k).classList.toggle('done',q.checks[k]);
   calcQ(q);
 }
+window.tog = tog;
 
 function togXQi(i){
   var q=STATE.Q; if(!q)return;
@@ -349,6 +405,7 @@ function togXQ(){
   b.textContent=o?'Cancelar':'+ Gasto extra';
   if(o){ g('q-xd').value=''; g('q-xm').value=''; g('q-xd').focus(); }
 }
+window.togXQ = togXQ;
 
 function addXQ(){
   var desc=g('q-xd').value.trim();
@@ -359,6 +416,7 @@ function addXQ(){
   q.extras.push({n:desc,m:m});
   persist(); togXQ(); renderQ();
 }
+window.addXQ = addXQ;
 
 function delXQ(i){
   var q=STATE.Q; if(!q)return;
@@ -370,6 +428,7 @@ function delXQ(i){
   });
   q.checks=nc; persist(); renderQ();
 }
+window.delXQ = delXQ;
 
 function guardar(){
   var q=STATE.Q; if(!q)return;
@@ -383,6 +442,7 @@ function guardar(){
   g('st-i').style.display=''; g('st-a').style.display='none';
   goH();
 }
+window.guardar = guardar;
 
 function reiniciar(){
   if(!confirm('¿Reiniciar?'))return;
@@ -390,20 +450,20 @@ function reiniciar(){
   q.checks={}; q.extras=[]; q.nota='';
   persist(); renderQ();
 }
+window.reiniciar = reiniciar;
 
 var notaT;
 g('q-nota').addEventListener('input',function(e){
   clearTimeout(notaT); notaT=setTimeout(function(){
     var q=STATE.Q; if(!q)return;
     q.nota=e.target.value; persist();
-  },600);
+  },800);
 });
 g('ing').addEventListener('input',function(){ fmt(this); });
 g('ing').addEventListener('keydown',function(e){ if(e.key==='Enter') empezar(); });
 g('q-xm').addEventListener('input',function(){ fmt(this); });
 g('q-xm').addEventListener('keydown',function(e){ if(e.key==='Enter') addXQ(); });
 
-// HISTORIAL
 function renderH(){
   var h=STATE.HIST, el=g('hlist');
   if(!h.length){ el.innerHTML='<div class="hempty">Sin quincenas guardadas aún.</div>'; return; }
@@ -418,13 +478,8 @@ function renderH(){
   }).join('');
 }
 
-// MODAL
 var MID=null;
-
-function getE(){
-  var i=STATE.HIST.findIndex(function(x){ return x.id===MID; });
-  return {arr:STATE.HIST, i:i, e:STATE.HIST[i]||null};
-}
+function getE(){ var i=STATE.HIST.findIndex(function(x){ return x.id===MID; }); return {arr:STATE.HIST,i:i,e:STATE.HIST[i]||null}; }
 
 function abrir(id){
   MID=id;
@@ -437,6 +492,7 @@ function abrir(id){
   renderMF(e); renderMX(e); updLib(e);
   g('ov').classList.add('on');
 }
+window.abrir = abrir;
 
 function updLib(e){
   var gg=0;
@@ -489,6 +545,7 @@ function togXH(){
   b.textContent=o?'Cancelar':'+ Gasto extra';
   if(o){ g('m-xd').value=''; g('m-xm').value=''; g('m-xd').focus(); }
 }
+window.togXH = togXH;
 
 function addXH(){
   var desc=g('m-xd').value.trim();
@@ -501,6 +558,7 @@ function addXH(){
   r.e.checks['x'+xi]=true;
   updLib(r.e); persist(); renderMX(r.e); togXH();
 }
+window.addXH = addXH;
 
 g('m-xm').addEventListener('input',function(){ fmt(this); });
 g('m-xm').addEventListener('keydown',function(e){ if(e.key==='Enter') addXH(); });
@@ -510,19 +568,32 @@ g('m-nota').addEventListener('input',function(e){
   clearTimeout(mnotaT); mnotaT=setTimeout(function(){
     var r=getE(); if(!r.e)return;
     r.e.nota=e.target.value; persist(); renderH();
-  },600);
+  },800);
 });
 
 function cerrar(){ g('ov').classList.remove('on'); MID=null; }
+window.cerrar = cerrar;
+
 function eliminar(){
   if(!confirm('¿Eliminar esta quincena?'))return;
   STATE.HIST=STATE.HIST.filter(function(x){ return x.id!==MID; });
   persist(); cerrar(); renderH();
 }
+window.eliminar = eliminar;
 
 // INIT
 selQ(qSel);
-initStorage();
+// Cargar local primero (instantáneo), luego Firebase
+try {
+  var lq = localStorage.getItem('fin-q');
+  var lh = localStorage.getItem('fin-hist');
+  if (lq) STATE.Q = JSON.parse(lq);
+  if (lh) STATE.HIST = JSON.parse(lh);
+} catch(e) {}
+renderQ();
+setSync('Sincronizando con la nube...');
+fbLoad();
+
 </script>
 </body>
 </html>
